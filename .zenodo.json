@@ -1,6 +1,6 @@
 {
   "title": "Cymatic Phi-NeRF: Quasi-Periodic Golden-Ratio Positional Encoding and 3D Nyquist Anti-Aliasing in Neural Radiance Fields",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "upload_type": "software",
   "publication_date": "2026-11-01",
   "description": "Analytical 3D Shannon-Nyquist bandwidth diagnostics, Diophantine harmonic phase-collision metric, and PyTorch volumetric NeRF benchmarks demonstrating +1.84 to +2.03 dB held-out test PSNR gains from quasi-periodic Golden-Ratio (Phi^k) positional encodings.",

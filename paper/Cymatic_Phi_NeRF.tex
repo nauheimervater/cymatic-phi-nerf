@@ -11,7 +11,7 @@
 
 \title{\textbf{Cymatic $\Phi$-NeRF: Quasi-Periodic Golden-Ratio Positional Encoding and 3D Nyquist Anti-Aliasing in Neural Radiance Fields}}
 \author{Thomas Nauheimer\\Independent Researcher (\texttt{nauheimer.t@gmail.com})}
-\date{November 2026}
+\date{November 2026 (v1.0.1)}
 
 \begin{document}
 \maketitle
@@ -33,7 +33,7 @@ For $N$ uniform volumetric samples in $[-R, R]^3$, the mean linear spacing is $\
 \begin{equation}
 \omega_{\mathrm{Nyq}} = \frac{\pi}{\Delta x} = \frac{\pi N^{1/3}}{2R}.
 \end{equation}
-For $N = 8,192$ and $R = 1$, $\omega_{\mathrm{Nyq}} = 10.0794\pi\text{ rad/unit}$. Under $L = 8$, dyadic encoding ($b=2$) places 4 of 8 bands ($16\pi, 32\pi, 64\pi, 128\pi$) above $\omega_{\mathrm{Nyq}}$, whereas Golden-Ratio encoding ($b=\Phi \approx 1.6180$) places 6 of 8 bands within or at the edge of $\omega_{\mathrm{Nyq}}$ ($\le 11.09\pi$), and the Nyquist-matched base $b_{\mathrm{Nyq}} = (N^{1/3}/2R)^{1/(L-1)} \approx 1.3911$ places all 8 of 8 bands inside the unaliased passband.
+For $N = 8,192$ and $R = 1$, $\omega_{\mathrm{Nyq}} = 10.0794\pi\text{ rad/unit}$. Under $L = 8$, dyadic encoding ($b=2$) places 4 of 8 bands ($16\pi, 32\pi, 64\pi, 128\pi$) above $\omega_{\mathrm{Nyq}}$, whereas Golden-Ratio encoding ($b=\Phi \approx 1.6180$) places 5 of 8 bands below $\omega_{\mathrm{Nyq}}$ (a sixth, $11.09\pi$, lies within $10\%$ above it), and the Nyquist-matched base $b_{\mathrm{Nyq}} = (N^{1/3}/2R)^{1/(L-1)} \approx 1.3911$ places all 8 of 8 bands inside the unaliased passband.
 \end{proposition}
 
 \begin{proposition}[Diophantine Phase-Collision Metric]
@@ -41,7 +41,7 @@ Define the low-order integer harmonic collision index across an $L$-band progres
 \begin{equation}
 C(b) = \frac{2}{L(L-1)} \sum_{0 \le j < k < L} \frac{1}{\min_{1 \le m \le M} |b^{k-j} - m| + \epsilon}, \qquad \epsilon = 10^{-3},\; M = 8.
 \end{equation}
-For $L = 8$, exact integer ratios $2^{k-j} \in \mathbb{Z}$ yield $C(2.0) = 642.86$, whereas the Golden Ratio $\Phi = [1; 1, 1, \dots]$ reduces integer harmonic collisions by $45\times$ to $C(\Phi) = 14.23$.
+For $L = 8$, exact integer ratios $2^{k-j} \in \mathbb{Z}$ yield $C(2.0) = 642.88$, whereas the Golden Ratio $\Phi = [1; 1, 1, \dots]$ gives $C(\Phi) = 2.98$ and the Nyquist-matched base $C(1.3911) = 5.84$. Since the best-performing base has the higher collision index, the empirical gains are attributed primarily to sub-Nyquist band placement. (v1.0.1 erratum: v1.0.0 stated 14.23 and 30.15.)
 \end{proposition}
 
 \section{Multi-Seed Held-Out Generalization Benchmark}

@@ -112,7 +112,7 @@ def build_pdf(output_path: str) -> None:
     )
     story.append(
         Paragraph(
-            "<b>Thomas Nauheimer</b><br/>Independent Researcher (nauheimer.t@gmail.com)<br/>November 2026 &middot; Repository: https://github.com/nauheimervater/cymatic-phi-nerf",
+            "<b>Thomas Nauheimer</b><br/>Independent Researcher (nauheimer.t@gmail.com)<br/>November 2026 (v1.0.1) &middot; Repository: https://github.com/nauheimervater/cymatic-phi-nerf",
             author_style,
         )
     )
@@ -139,13 +139,13 @@ def build_pdf(output_path: str) -> None:
     )
     story.append(
         Paragraph(
-            "<b>Proposition 1 (Sub-Nyquist Band Packing).</b> Under L = 8 bands, standard dyadic scaling (b = 2) places 4 of 8 bands (16&pi;, 32&pi;, 64&pi;, 128&pi;) strictly above &omega;<sub>Nyq</sub>, reaching 12.7&times; the Nyquist limit and causing severe inter-ray aliasing. By contrast, Golden-Ratio scaling (b = &Phi; &approx; 1.6180) packs 6 of 8 bands below or at the Nyquist edge (&le; 11.09&pi;), while the Nyquist-matched base b<sub>Nyq</sub> = (10.0794)<sup>1/7</sup> &approx; 1.3911 places all 8 of 8 bands inside the unaliased passband.",
+            "<b>Proposition 1 (Sub-Nyquist Band Packing).</b> Under L = 8 bands, standard dyadic scaling (b = 2) places 4 of 8 bands (16&pi;, 32&pi;, 64&pi;, 128&pi;) strictly above &omega;<sub>Nyq</sub>, reaching 12.7&times; the Nyquist limit and causing severe inter-ray aliasing. By contrast, Golden-Ratio scaling (b = &Phi; &approx; 1.6180) places 5 of 8 bands below the Nyquist limit (a sixth, 11.09&pi;, lies within 10% above it), while the Nyquist-matched base b<sub>Nyq</sub> = (10.0794)<sup>1/7</sup> &approx; 1.3911 places all 8 of 8 bands inside the unaliased passband.",
             body_style,
         )
     )
     story.append(
         Paragraph(
-            "<b>Proposition 2 (Diophantine Phase-Collision Metric).</b> Measuring low-order integer harmonic commensurability via C(b) = mean<sub>0&le;j&lt;k&lt;L</sub> [min<sub>1&le;m&le;8</sub> |b<sup>k&minus;j</sup> &minus; m| + 10<sup>&minus;3</sup>]<sup>&minus;1</sup> shows that dyadic octaves produce C(2.0) = 642.86 due to exact integer powers 2<sup>k&minus;j</sup> &isin; Z, whereas &Phi; = [1; 1, 1, ...] reduces harmonic phase collisions by 45&times; to C(&Phi;) = 14.23.",
+            "<b>Proposition 2 (Diophantine Phase-Collision Metric).</b> Measuring low-order integer harmonic commensurability via C(b) = mean<sub>0&le;j&lt;k&lt;L</sub> [min<sub>1&le;m&le;8</sub> |b<sup>k&minus;j</sup> &minus; m| + 10<sup>&minus;3</sup>]<sup>&minus;1</sup> shows that dyadic octaves produce C(2.0) = 642.88 due to exact integer powers 2<sup>k&minus;j</sup> &isin; Z, whereas &Phi; = [1; 1, 1, ...] gives C(&Phi;) = 2.98 and the Nyquist-matched base C(1.3911) = 5.84. Because the best-performing base has the higher collision index, the gains are attributed primarily to sub-Nyquist band placement. <i>(Erratum v1.0.1: v1.0.0 stated 14.23 / 30.15 and 6 of 8 sub-Nyquist &Phi; bands.)</i>",
             body_style,
         )
     )
@@ -162,9 +162,9 @@ def build_pdf(output_path: str) -> None:
     t1_data = [
         ["Encoding Variant", "Base b", "log2(b)", "Max Band (rad)", "Sub-Nyquist Bands", "Collision C(b)"],
         ["Standard Dyadic (2^k)", "2.0000", "1.0000", "128.00 pi", "4 / 8 (50%)", "642.86"],
-        ["Pure Golden Ratio (Phi^k)", "1.6180", "0.6942", "29.03 pi", "6 / 8 (75%)", "14.23"],
-        ["Cymatic Phi (Phi^k + w_4)", "1.6180", "0.6942", "29.03 pi", "6 / 8 (75%)", "14.23"],
-        ["Nyquist-Matched (1.391^k)", "1.3911", "0.4762", "10.08 pi", "8 / 8 (100%)", "30.15"],
+        ["Pure Golden Ratio (Phi^k)", "1.6180", "0.6942", "29.03 pi", "5 / 8 (62.5%)", "2.98"],
+        ["Cymatic Phi (Phi^k + w_4)", "1.6180", "0.6942", "29.03 pi", "5 / 8 (62.5%)", "2.98"],
+        ["Nyquist-Matched (1.391^k)", "1.3911", "0.4762", "10.08 pi", "8 / 8 (100%)", "5.84"],
     ]
     t1 = Table(t1_data, colWidths=[4.3 * cm, 1.8 * cm, 1.8 * cm, 2.5 * cm, 3.1 * cm, 2.6 * cm])
     t1.setStyle(

@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software or manuscript, please cite it as below."
 title: "Cymatic Phi-NeRF: Quasi-Periodic Golden-Ratio Positional Encoding and 3D Nyquist Anti-Aliasing in Neural Radiance Fields"
-version: 1.0.0
+version: 1.0.1
 date-released: 2026-11-01
 url: "https://github.com/nauheimervater/cymatic-phi-nerf"
 repository-code: "https://github.com/nauheimervater/cymatic-phi-nerf"

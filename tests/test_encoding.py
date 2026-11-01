@@ -39,8 +39,10 @@ class TestCymaticPhiNeRF(unittest.TestCase):
         # Dyadic b=2 has exact integer powers 2^(k-j), maximizing integer harmonic collisions
         c_dyadic = diophantine_phase_collision_metric(2.0, num_freqs=8, max_harmonic=8)
         c_phi = diophantine_phase_collision_metric(PHI, num_freqs=8, max_harmonic=8)
-        self.assertGreater(c_dyadic, 400.0)
-        self.assertLess(c_phi, 15.0)
+        self.assertAlmostEqual(c_dyadic, 642.88, places=1)
+        self.assertAlmostEqual(c_phi, 2.98, places=1)
+        c_nyq = diophantine_phase_collision_metric(10.079368399 ** (1.0 / 7.0), num_freqs=8, max_harmonic=8)
+        self.assertAlmostEqual(c_nyq, 5.84, places=1)
 
     def test_encoding_shapes_and_finiteness(self) -> None:
         pts = torch.randn(64, 3)

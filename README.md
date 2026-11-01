@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://www.python.org/)
-[![Release v1.0.0](https://img.shields.io/badge/Release-v1.0.0-orange.svg)](https://github.com/nauheimervater/cymatic-phi-nerf/releases/tag/v1.0.0)
+[![Release v1.0.0](https://img.shields.io/badge/Release-v1.0.1-orange.svg)](https://github.com/nauheimervater/cymatic-phi-nerf/releases/tag/v1.0.1)
 
 **Author:** Thomas Nauheimer, Independent Researcher (`nauheimer.t@gmail.com`)  
 **Paper:** [`paper/Cymatic_Phi_NeRF.pdf`](paper/Cymatic_Phi_NeRF.pdf) · [`paper/Cymatic_Phi_NeRF.md`](paper/Cymatic_Phi_NeRF.md) · [`paper/Cymatic_Phi_NeRF.tex`](paper/Cymatic_Phi_NeRF.tex)
@@ -16,8 +16,10 @@ Coordinate-based Multi-Layer Perceptrons (MLPs) in Neural Radiance Fields (NeRF)
 $$\omega_{\text{Nyq}} = \frac{\pi}{\Delta x} = \frac{\pi N^{1/3}}{2R} \approx 10.08\,\pi\text{ rad/unit} \qquad (N = 8,192,\; R = 1)$$
 
 This repository proves and benchmarks two fundamental properties of positional encoding bases:
-1. **Sub-Nyquist Band Packing (Proposition 1):** Standard dyadic encoding ($2^k \pi$, $L = 8$) places **4 of its 8 bands** ($16\pi, 32\pi, 64\pi, 128\pi$) strictly above $\omega_{\text{Nyq}}$, causing severe high-frequency overfitting between sampled points. Replacing $b = 2$ with the **Golden Ratio** $\Phi = \frac{1+\sqrt{5}}{2} \approx 1.618034$ ($\log_2 \Phi \approx 0.6942\text{ octaves/band}$) packs **6 of 8 bands** inside/at the Nyquist limit ($\le 11.09\pi$), while the exact **Nyquist-Matched base** $b_{\text{Nyq}} = \omega_{\text{Nyq}}^{1/(L-1)} \approx 1.3911$ packs **all 8 of 8 bands** inside the unaliased passband.
-2. **Diophantine Incommensurability (Proposition 2):** Because $\Phi = [1; 1, 1, \dots]$ is the Hurwitz most-irrational number, Golden-Ratio progressions reduce low-order integer harmonic phase collisions $C(b)$ by **$45\times$** compared to dyadic octaves ($C(\Phi) = 14.23$ vs. $C(2) = 642.86$).
+1. **Sub-Nyquist Band Packing (Proposition 1):** Standard dyadic encoding ($2^k \pi$, $L = 8$) places **4 of its 8 bands** ($16\pi, 32\pi, 64\pi, 128\pi$) strictly above $\omega_{\text{Nyq}}$, causing severe high-frequency overfitting between sampled points. Replacing $b = 2$ with the **Golden Ratio** $\Phi = \frac{1+\sqrt{5}}{2} \approx 1.618034$ ($\log_2 \Phi \approx 0.6942\text{ octaves/band}$) places **5 of 8 bands** below the Nyquist limit (a sixth, $11.09\pi$, just above it), while the exact **Nyquist-Matched base** $b_{\text{Nyq}} = \omega_{\text{Nyq}}^{1/(L-1)} \approx 1.3911$ packs **all 8 of 8 bands** inside the unaliased passband.
+2. **Diophantine Incommensurability (Proposition 2):** Because $\Phi = [1; 1, 1, \dots]$ is the Hurwitz most-irrational number, Golden-Ratio progressions have far fewer low-order integer harmonic collisions than dyadic octaves ($C(\Phi) = 2.98$ vs. $C(2) = 642.88$). However, the best-performing Nyquist-matched base has $C = 5.84$, so the empirical gains are driven primarily by sub-Nyquist band placement.
+
+> **Erratum (v1.0.1):** v1.0.0 stated $C(\Phi) = 14.23$, $C(1.391) = 30.15$ ("$45\times$") and 6 of 8 sub-Nyquist $\Phi^k$ bands. Corrected values above; PSNR results unchanged.
 
 ---
 

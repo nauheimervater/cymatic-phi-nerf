@@ -2,7 +2,10 @@
 
 **Author:** Thomas Nauheimer  
 **Affiliation:** Independent Researcher (`nauheimer.t@gmail.com`)  
-**Date:** November 2026  
+**Date:** November 2026 (v1.0.1)  
+
+> **Erratum (v1.0.1):** v1.0.0 stated collision indices $C(\Phi) = 14.23$ and $C(1.391) = 30.15$ ("$45\times$ reduction") and that 6 of 8 golden-ratio bands lie within the Nyquist limit. Recomputed with the published code: $C(2) = 642.88$, $C(\Phi) = 2.98$, $C(1.3911) = 5.84$; 5 of 8 $\Phi^k$ bands lie below $\omega_{\text{Nyq}}$ (6 within $1.1\,\omega_{\text{Nyq}}$). PSNR results are unchanged.
+
 **Repository:** [https://github.com/nauheimervater/cymatic-phi-nerf](https://github.com/nauheimervater/cymatic-phi-nerf)  
 
 ---
@@ -41,7 +44,7 @@ $$\omega_{\text{Nyq}} = 10.0794\,\pi\text{ rad/unit}$$
 
 For an $L = 8$ band encoding $\omega_k = b^k \pi$ ($k = 0, \dots, 7$):
 1. **Standard Dyadic ($b = 2$):** $\omega_k / \pi \in \{1, 2, 4, 8, 16, 32, 64, 128\}$. Exactly **4 of the 8 bands** ($16\pi, 32\pi, 64\pi, 128\pi$) lie strictly above $\omega_{\text{Nyq}}$, reaching $12.7\times$ the Nyquist limit. During gradient descent, these super-Nyquist basis functions memorize arbitrary training-point noise and oscillate wildly in the empty space between rays.
-2. **Golden-Ratio Encoding ($b = \Phi = \frac{1+\sqrt{5}}{2} \approx 1.6180$):** $\omega_k / \pi \in \{1.00, 1.62, 2.62, 4.24, 6.85, 11.09, 17.94, 29.03\}$. Because $\log_2 \Phi \approx 0.6942\text{ octaves/band}$, **6 of the 8 bands** remain within or at the edge of the Nyquist limit ($\le 11.09\pi$), and the maximum frequency ($29.03\pi$) is reduced by $4.41\times$ compared to dyadic encoding.
+2. **Golden-Ratio Encoding ($b = \Phi = \frac{1+\sqrt{5}}{2} \approx 1.6180$):** $\omega_k / \pi \in \{1.00, 1.62, 2.62, 4.24, 6.85, 11.09, 17.94, 29.03\}$. Because $\log_2 \Phi \approx 0.6942\text{ octaves/band}$, **5 of the 8 bands** lie below the Nyquist limit and a sixth ($11.09\pi$) lies just above it (within $10\%$), and the maximum frequency ($29.03\pi$) is reduced by $4.41\times$ compared to dyadic encoding.
 3. **Exact Nyquist-Matched Base ($b_{\text{Nyq}}$):** Setting $b_{\text{Nyq}}^{L-1} \pi = \omega_{\text{Nyq}}$ gives:
 
 $$b_{\text{Nyq}} = \left(\frac{N^{1/3}}{2R}\right)^{\frac{1}{L-1}} = (10.0794)^{1/7} \approx 1.3911$$
@@ -59,7 +62,7 @@ $$C(b) = \frac{2}{L(L-1)} \sum_{0 \le j < k < L} \frac{1}{\min_{1 \le m \le M} |
 
 For $L = 8$:
 - **Dyadic ($b = 2$):** Since $2^{k-j} \in \{2, 4, 8\}$ is an exact integer for $k - j \in \{1, 2, 3\}$, the distance vanishes and $C(2.0) = \mathbf{642.86}$.
-- **Golden Ratio ($b = \Phi$):** By Hurwitz's theorem on Diophantine approximation, $\Phi = [1; 1, 1, 1, \dots]$ is the most irrational number, maximizing the distance of its powers from low-order integers and reducing the collision index by $45\times$ to $C(\Phi) = \mathbf{14.23}$.
+- **Golden Ratio ($b = \Phi$):** By Hurwitz's theorem on Diophantine approximation, $\Phi = [1; 1, 1, 1, \dots]$ is the most irrational number, maximizing the distance of its powers from low-order integers and reducing the collision index by roughly $216\times$ to $C(\Phi) = \mathbf{2.98}$. (Note that the Nyquist-matched base $b = 1.3911$, which performs best empirically, has a higher collision index $C = 5.84$ than $\Phi$; the empirical gains are therefore driven primarily by sub-Nyquist band placement, not by Diophantine properties.)
 
 ### Cymatic Polar Standing-Wave Envelope
 Inspired by acoustic Chladni / cymatic nodal patterns on spherical shells, Cymatic $\Phi$-NeRF optionally multiplies the quasi-periodic coordinate basis by a polar standing-wave envelope in spherical zenith angle $\theta = \arccos(z / \|\mathbf{p}\|_2)$:
@@ -84,9 +87,9 @@ To rigorously separate (i) fast training-set convergence, (ii) out-of-sample gen
 | Encoding Variant | Base $b$ | Octaves / Band ($\log_2 b$) | Max Frequency ($\omega_7 / \pi$) | Sub-Nyquist Bands ($\le 10.08\pi$) | Collision Index $C(b)$ |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Standard Dyadic NeRF** | $2.0000$ | $1.0000$ | $128.00$ | $4 / 8$ ($50\%$) | $642.86$ |
-| **Pure Golden Ratio ($\Phi^k$)** | $1.6180$ | $0.6942$ | $29.03$ | $6 / 8$ ($75\%$) | $14.23$ |
-| **Cymatic $\Phi$-NeRF ($\Phi^k + w_4(\theta)$)** | $1.6180$ | $0.6942$ | $29.03$ | $6 / 8$ ($75\%$) | $14.23$ |
-| **Nyquist-Matched ($b_{\text{Nyq}}^k$)** | $1.3911$ | $0.4762$ | $10.08$ | $8 / 8$ ($100\%$) | $30.15$ |
+| **Pure Golden Ratio ($\Phi^k$)** | $1.6180$ | $0.6942$ | $29.03$ | $5 / 8$ ($62.5\%$) | $2.98$ |
+| **Cymatic $\Phi$-NeRF ($\Phi^k + w_4(\theta)$)** | $1.6180$ | $0.6942$ | $29.03$ | $5 / 8$ ($62.5\%$) | $2.98$ |
+| **Nyquist-Matched ($b_{\text{Nyq}}^k$)** | $1.3911$ | $0.4762$ | $10.08$ | $8 / 8$ ($100\%$) | $5.84$ |
 
 ### Table 2: Multi-Seed Held-Out Generalization Benchmark ($3$ Seeds: `42, 43, 44`, $N_{\text{train}} = 8,192$, $N_{\text{test}} = 4,096$)
 
