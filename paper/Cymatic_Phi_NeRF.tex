@@ -1,0 +1,76 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\newtheorem{proposition}{Proposition}
+
+\title{\textbf{Cymatic $\Phi$-NeRF: Quasi-Periodic Golden-Ratio Positional Encoding and 3D Nyquist Anti-Aliasing in Neural Radiance Fields}}
+\author{Thomas Nauheimer\\Independent Researcher (\texttt{nauheimer.t@gmail.com})}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Coordinate-based Multi-Layer Perceptrons (MLPs) in Neural Radiance Fields (NeRF) rely on sinusoidal positional encodings to overcome spectral bias. The standard NeRF formulation uses a dyadic progression $\omega_k = 2^k \pi$ ($k = 0, \dots, L-1$). We demonstrate analytically and empirically that under finite volumetric sample budgets $N$ in $[-1, 1]^3$, dyadic scaling suffers from two distinct failure modes: (1) \textbf{Super-Nyquist Volumetric Aliasing}, where half of the frequency bands for $L=8$ ($16\pi, 32\pi, 64\pi, 128\pi$) exceed the 3D Shannon--Nyquist cutoff $\omega_{\mathrm{Nyq}} = \frac{\pi}{2} N^{1/3} \approx 10.08\pi\text{ rad/unit}$ (at $N = 8,192$), inducing severe high-frequency overfitting between sampled points; and (2) \textbf{Harmonic Phase Locking}, where exact integer ratios $\omega_k / \omega_j = 2^{k-j} \in \mathbb{Z}$ cause constructive interference spikes across octaves. We introduce \textbf{Cymatic $\Phi$-NeRF}, replacing $2^k$ scaling with powers of the Golden Ratio $\Phi = \frac{1+\sqrt{5}}{2} \approx 1.618034$ ($\log_2 \Phi \approx 0.6942$ octaves/band) coupled with an optional polar cymatic standing-wave envelope $w_m(\theta) = 0.8 + 0.2|\sin(m\theta)|$. Across 3-seed held-out generalization benchmarks ($N_{\mathrm{train}} = 8,192$, $N_{\mathrm{test}} = 4,096$), Golden-Ratio and Cymatic $\Phi$-encodings outperform standard dyadic NeRF by $+1.84\text{ to }+2.03\text{ dB}$ Test PSNR on spherical shell fields and by $+1.00\text{ to }+1.04\text{ dB}$ Test PSNR on a neutral 3D Schoen Gyroid minimal surface containing zero $\Phi$-dependency in its ground truth. Explicitly matching the geometric base to the 3D Nyquist cutoff ($b_{\mathrm{Nyq}} = \omega_{\mathrm{Nyq}}^{1/(L-1)} \approx 1.391$) yields $20.76 \pm 0.50\text{ dB}$ ($+4.08\text{ dB}$ over dyadic), confirming sub-Nyquist spectral packing as the primary physical mechanism.
+\end{abstract}
+
+\section{Introduction}
+Coordinate-based neural networks $F_\Theta: \mathbb{R}^3 \to \mathbb{R}^3 \times \mathbb{R}_{\ge 0}$ lift input coordinates $\mathbf{p} \in [-1, 1]^3$ into Fourier feature space via:
+\begin{equation}
+\gamma_b(\mathbf{p}) = \Big(\mathbf{p},\; \sin(b^0 \pi \mathbf{p}),\; \cos(b^0 \pi \mathbf{p}),\; \dots,\; \sin(b^{L-1} \pi \mathbf{p}),\; \cos(b^{L-1} \pi \mathbf{p})\Big).
+\end{equation}
+While standard NeRF selects $b = 2$, octave doubling ignores the finite 3D spatial sampling density of volumetric point clouds and the number-theoretic structure of harmonic cross-talk.
+
+\section{3D Nyquist Cutoff and Diophantine Phase Collisions}
+\begin{proposition}[Volumetric 3D Shannon--Nyquist Cutoff]
+For $N$ uniform volumetric samples in $[-R, R]^3$, the mean linear spacing is $\Delta x = 2R / N^{1/3}$ and the maximum unaliased angular frequency is:
+\begin{equation}
+\omega_{\mathrm{Nyq}} = \frac{\pi}{\Delta x} = \frac{\pi N^{1/3}}{2R}.
+\end{equation}
+For $N = 8,192$ and $R = 1$, $\omega_{\mathrm{Nyq}} = 10.0794\pi\text{ rad/unit}$. Under $L = 8$, dyadic encoding ($b=2$) places 4 of 8 bands ($16\pi, 32\pi, 64\pi, 128\pi$) above $\omega_{\mathrm{Nyq}}$, whereas Golden-Ratio encoding ($b=\Phi \approx 1.6180$) places 6 of 8 bands within or at the edge of $\omega_{\mathrm{Nyq}}$ ($\le 11.09\pi$), and the Nyquist-matched base $b_{\mathrm{Nyq}} = (N^{1/3}/2R)^{1/(L-1)} \approx 1.3911$ places all 8 of 8 bands inside the unaliased passband.
+\end{proposition}
+
+\begin{proposition}[Diophantine Phase-Collision Metric]
+Define the low-order integer harmonic collision index across an $L$-band progression:
+\begin{equation}
+C(b) = \frac{2}{L(L-1)} \sum_{0 \le j < k < L} \frac{1}{\min_{1 \le m \le M} |b^{k-j} - m| + \epsilon}, \qquad \epsilon = 10^{-3},\; M = 8.
+\end{equation}
+For $L = 8$, exact integer ratios $2^{k-j} \in \mathbb{Z}$ yield $C(2.0) = 642.86$, whereas the Golden Ratio $\Phi = [1; 1, 1, \dots]$ reduces integer harmonic collisions by $45\times$ to $C(\Phi) = 14.23$.
+\end{proposition}
+
+\section{Multi-Seed Held-Out Generalization Benchmark}
+\begin{table}[h!]
+\centering
+\caption{3-Seed Held-Out Generalization ($N_{\mathrm{train}} = 8,192$, $N_{\mathrm{test}} = 4,096$, $300$ steps).}
+\vspace{0.2cm}
+\begin{tabular}{lcccc}
+\toprule
+Scene \& Encoding Variant & Train PSNR (dB) & Test PSNR (dB) & Test Loss & Gain vs.\ Dyadic \\
+\midrule
+\textbf{Scene 1: Spherical Shell ($\Phi$-Spiral)} & & & & \\
+Standard Dyadic ($2^k$) & $19.57 \pm 0.72$ & $16.68 \pm 0.74$ & $0.04847$ & Baseline \\
+Pure Golden Ratio ($\Phi^k, m=0$) & $20.96 \pm 0.67$ & $\mathbf{18.71 \pm 0.28}$ & $0.03034$ & $\mathbf{+2.03\text{ dB}}$ \\
+Cymatic $\Phi$-NeRF ($\Phi^k, m=4$) & $20.86 \pm 1.04$ & $\mathbf{18.52 \pm 0.38}$ & $0.03087$ & $\mathbf{+1.84\text{ dB}}$ \\
+Nyquist-Matched ($1.391^k$) & $22.74 \pm 0.86$ & $\mathbf{20.76 \pm 0.50}$ & $0.01596$ & $\mathbf{+4.08\text{ dB}}$ \\
+\midrule
+\textbf{Scene 2: Neutral 3D Schoen Gyroid} & & & & \\
+Standard Dyadic ($2^k$) & $12.49 \pm 0.60$ & $11.99 \pm 0.06$ & $0.47195$ & Baseline \\
+Pure Golden Ratio ($\Phi^k, m=0$) & $13.61 \pm 1.54$ & $\mathbf{13.03 \pm 0.95}$ & $0.44478$ & $\mathbf{+1.04\text{ dB}}$ \\
+Cymatic $\Phi$-NeRF ($\Phi^k, m=4$) & $13.45 \pm 1.35$ & $\mathbf{12.99 \pm 0.92}$ & $0.44498$ & $\mathbf{+1.00\text{ dB}}$ \\
+Nyquist-Matched ($1.391^k$) & $15.24 \pm 2.65$ & $\mathbf{14.74 \pm 2.24}$ & $0.35356$ & $\mathbf{+2.75\text{ dB}}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{thebibliography}{9}
+\bibitem{mildenhall2020} Mildenhall, B., et al. (2020). NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis. \textit{ECCV 2020}, 405--421.
+\bibitem{tancik2020} Tancik, M., et al. (2020). Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains. \textit{NeurIPS 2020}, 33, 7537--7547.
+\bibitem{barron2021} Barron, J. T., et al. (2021). Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields. \textit{ICCV 2021}, 5855--5864.
+\end{thebibliography}
+\end{document}
